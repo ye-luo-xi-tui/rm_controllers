@@ -2,8 +2,8 @@
 Changelog for package mimic_joint_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.5 (2022-06-10)
+------------------
 * Merge remote-tracking branch 'origin/master'
 * Merge pull request `#67 <https://github.com/ye-luo-xi-tui/rm_controllers/issues/67>`_ from ljq-lv/joint_mime_controller
   Add Joint mime controller

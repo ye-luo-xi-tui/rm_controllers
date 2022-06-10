@@ -2,8 +2,8 @@
 Changelog for package gpio_controller
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.5 (2022-06-10)
+------------------
 * Merge remote-tracking branch 'origin/master'
 * Merge pull request `#70 <https://github.com/ye-luo-xi-tui/rm_controllers/issues/70>`_ from XYM-github/gpio_controller_2
   Update gpio_controller to version2.0.
@@ -13,12 +13,3 @@ Forthcoming
 * Adaptation of gpio type to enum in gpio_interface.
 * Update gpio_controller to version2.0.
 * Contributors: QiayuanLiao, XYM-github, yezi
-
-0.1.3 (2022-03-28)
-------------------
-
-0.1.2 (2022-01-08)
-------------------
-
-0.1.1 (2021-08-12)
-------------------
