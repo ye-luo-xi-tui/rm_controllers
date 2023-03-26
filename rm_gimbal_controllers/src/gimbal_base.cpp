@@ -245,9 +245,6 @@ void Controller::track(const ros::Time& time)
   {
     ROS_WARN("%s", ex.what());
   }
-  target_pos.x -= odom2pitch_.transform.translation.x;
-  target_pos.y -= odom2pitch_.transform.translation.y;
-  target_pos.z -= odom2pitch_.transform.translation.z;
 
   bool solve_success = bullet_solver_->solve(target_pos, target_vel, cmd_gimbal_.bullet_speed);
 
