@@ -82,6 +82,7 @@ BulletSolver::BulletSolver(ros::NodeHandle& controller_nh)
       new realtime_tools::RealtimePublisher<visualization_msgs::Marker>(controller_nh, "model_desire", 10));
   path_real_pub_.reset(
       new realtime_tools::RealtimePublisher<visualization_msgs::Marker>(controller_nh, "model_real", 10));
+  pub_.reset(new realtime_tools::RealtimePublisher<std_msgs::Float64>(controller_nh, "test", 10));
 }
 
 double BulletSolver::getResistanceCoefficient(double bullet_speed) const
@@ -200,6 +201,11 @@ void BulletSolver::getYawVelAndAccelDes(double& vel_des, double& accel_des)
       pow((pow(target_pos_.x, 2) + pow(target_pos_.y, 2)), 2);
   vel_des = yaw_vel_des;
   accel_des = yaw_accel_des;
+  if (pub_->trylock())
+  {
+    pub_->msg_.data = yaw_vel_des;
+    pub_->unlockAndPublish();
+  }
 }
 
 void BulletSolver::getPitchVelAndAccelDes(double& vel_des, double& accel_des)
