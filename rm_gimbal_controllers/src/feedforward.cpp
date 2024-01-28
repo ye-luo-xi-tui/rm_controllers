@@ -11,9 +11,11 @@ void FrictionCompensation::init(XmlRpc::XmlRpcValue config)
   ROS_ASSERT(config.getType() == XmlRpc::XmlRpcValue::TypeStruct);
   resistance_ = config.hasMember("resistance") ? static_cast<double>(config["resistance"]) : 0.;
   velocity_saturation_point_ =
-      config.hasMember("velocity_saturation_point") ? static_cast<double>(config["velocity_saturation_point"]) : 0.;
+      config.hasMember("velocity_saturation_point") ? static_cast<double>(config["velocity_saturation_point"]) : 999.;
   effort_saturation_point_ =
-      config.hasMember("effort_saturation_point") ? static_cast<double>(config["effort_saturation_point"]) : 0.;
+      config.hasMember("effort_saturation_point") ? static_cast<double>(config["effort_saturation_point"]) : 999.;
+  if (effort_saturation_point_ < 1e9)
+    effort_saturation_point_ = 0.001;
 }
 
 double FrictionCompensation::output(double vel_act, double effort_cmd) const
