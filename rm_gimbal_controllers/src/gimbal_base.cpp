@@ -235,7 +235,7 @@ void Controller::track(const ros::Time& time)
   {
     ROS_WARN("%s", ex.what());
   }
-  if (data_track_.id != 12)
+  if (data_track_.id != 10)
   {
     geometry_msgs::Point target_pos = data_track_.position;
     geometry_msgs::Vector3 target_vel = data_track_.velocity;
@@ -252,7 +252,7 @@ void Controller::track(const ros::Time& time)
   }
   else
   {
-    bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, transform);
+    bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, transform, odom2pitch_);
   }
   bool solve_success = bullet_solver_->solve();
 

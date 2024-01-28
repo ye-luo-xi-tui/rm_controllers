@@ -55,7 +55,7 @@ BulletSolver::BulletSolver(ros::NodeHandle& controller_nh)
               .dt = getParam(controller_nh, "dt", 0.),
               .timeout = getParam(controller_nh, "timeout", 0.) };
   max_track_target_vel_ = getParam(controller_nh, "max_track_target_vel", 5.0);
-  windmill_radius_ = getParam(controller_nh, "windmill_radius", 0.2);
+  windmill_radius_ = getParam(controller_nh, "windmill_radius", 0.7);
   config_rt_buffer_.initRT(config_);
 
   marker_desire_.header.frame_id = "odom";
@@ -142,12 +142,12 @@ void BulletSolver::input(geometry_msgs::Point pos, geometry_msgs::Vector3 vel, d
 }
 
 void BulletSolver::input(double theta, double theta_dot, double bullet_speed,
-                         geometry_msgs::TransformStamped windmill2odom)
+                         geometry_msgs::TransformStamped windmill2odom, geometry_msgs::TransformStamped odom2pitch)
 {
   bullet_speed_ = bullet_speed;
   resistance_coff_ = getResistanceCoefficient(bullet_speed_) != 0 ? getResistanceCoefficient(bullet_speed_) : 0.001;
   track_target_ = true;
-  target_kinematics_.reset(new WindmillKinematics(theta, theta_dot, windmill_radius_, windmill2odom));
+  target_kinematics_.reset(new WindmillKinematics(theta, theta_dot, windmill_radius_, windmill2odom, odom2pitch));
 }
 
 bool BulletSolver::solve()

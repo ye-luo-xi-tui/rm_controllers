@@ -100,12 +100,14 @@ public:
 class WindmillKinematics : public TargetKinematicsBase
 {
 public:
-  WindmillKinematics(double theta, double theta_dot, double radius, geometry_msgs::TransformStamped windmill2odom)
+  WindmillKinematics(double theta, double theta_dot, double radius, geometry_msgs::TransformStamped windmill2odom,
+                     geometry_msgs::TransformStamped odom2pitch)
   {
     theta_ = theta;
     theta_dot_ = theta_dot;
     radius_ = radius;
     windmill2odom_ = windmill2odom;
+    odom2pitch_ = odom2pitch;
   }
   geometry_msgs::Point position(double time) override
   {
@@ -114,6 +116,9 @@ public:
     target_pos.y = -radius_ * sin(theta_ + theta_dot_ * time);
     target_pos.z = radius_ * cos(theta_ + theta_dot_ * time);
     tf2::doTransform(target_pos, target_pos, windmill2odom_);
+    target_pos.x -= odom2pitch_.transform.translation.x;
+    target_pos.y -= odom2pitch_.transform.translation.y;
+    target_pos.z -= odom2pitch_.transform.translation.z;
     return target_pos;
   }
   geometry_msgs::Vector3 velocity(double time) override
@@ -140,4 +145,5 @@ private:
   double theta_dot_;
   double radius_;
   geometry_msgs::TransformStamped windmill2odom_;
+  geometry_msgs::TransformStamped odom2pitch_;
 };
