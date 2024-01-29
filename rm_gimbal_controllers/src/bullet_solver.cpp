@@ -201,11 +201,6 @@ void BulletSolver::getYawVelAndAccelDes(double& vel_des, double& accel_des)
       pow((pow(target_pos_.x, 2) + pow(target_pos_.y, 2)), 2);
   vel_des = yaw_vel_des;
   accel_des = yaw_accel_des;
-  if (pub_->trylock())
-  {
-    pub_->msg_.data = yaw_vel_des;
-    pub_->unlockAndPublish();
-  }
 }
 
 void BulletSolver::getPitchVelAndAccelDes(double& vel_des, double& accel_des)
@@ -233,8 +228,13 @@ void BulletSolver::getPitchVelAndAccelDes(double& vel_des, double& accel_des)
   pitch_accel_des = (pitch_vel_des - last_pitch_vel_des_) / (now - last_pitch_vel_des_solve_time_).toSec();
   last_pitch_vel_des_ = pitch_vel_des;
   last_pitch_vel_des_solve_time_ = now;
-  vel_des = pitch_vel_des;
-  accel_des = pitch_accel_des;
+  vel_des = -pitch_vel_des;
+  accel_des = -pitch_accel_des;
+  if (pub_->trylock())
+  {
+    pub_->msg_.data = vel_des;
+    pub_->unlockAndPublish();
+  }
 }
 
 void BulletSolver::bulletModelPub(const geometry_msgs::TransformStamped& odom2pitch, const ros::Time& time)

@@ -224,6 +224,8 @@ void Controller::track(const ros::Time& time)
   ros::Time now = ros::Time::now();
   double yaw = data_track_.yaw + data_track_.v_yaw * (now - data_track_.header.stamp).toSec();
   geometry_msgs::TransformStamped transform;
+  bool lookup_success = true;
+  bool solve_success;
   try
   {
     if (!data_track_.header.frame_id.empty())
@@ -234,27 +236,32 @@ void Controller::track(const ros::Time& time)
   catch (tf2::TransformException& ex)
   {
     ROS_WARN("%s", ex.what());
+    lookup_success = false;
+    solve_success = false;
   }
-  if (data_track_.id != 10)
+  if (lookup_success)
   {
-    geometry_msgs::Point target_pos = data_track_.position;
-    geometry_msgs::Vector3 target_vel = data_track_.velocity;
-    tf2::doTransform(target_pos, target_pos, transform);
-    tf2::doTransform(target_vel, target_vel, transform);
-    target_pos.x += target_vel.x * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.x;
-    target_pos.y += target_vel.y * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.y;
-    target_pos.z += target_vel.z * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.z;
-    target_vel.x -= chassis_vel_->linear_->x();
-    target_vel.y -= chassis_vel_->linear_->y();
-    target_vel.z -= chassis_vel_->linear_->z();
-    bullet_solver_->input(target_pos, target_vel, cmd_gimbal_.bullet_speed, yaw, data_track_.v_yaw,
-                          data_track_.radius_1, data_track_.radius_2, data_track_.dz, data_track_.armors_num);
+    if (data_track_.id != 10)
+    {
+      geometry_msgs::Point target_pos = data_track_.position;
+      geometry_msgs::Vector3 target_vel = data_track_.velocity;
+      tf2::doTransform(target_pos, target_pos, transform);
+      tf2::doTransform(target_vel, target_vel, transform);
+      target_pos.x += target_vel.x * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.x;
+      target_pos.y += target_vel.y * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.y;
+      target_pos.z += target_vel.z * (now - data_track_.header.stamp).toSec() - odom2pitch_.transform.translation.z;
+      target_vel.x -= chassis_vel_->linear_->x();
+      target_vel.y -= chassis_vel_->linear_->y();
+      target_vel.z -= chassis_vel_->linear_->z();
+      bullet_solver_->input(target_pos, target_vel, cmd_gimbal_.bullet_speed, yaw, data_track_.v_yaw,
+                            data_track_.radius_1, data_track_.radius_2, data_track_.dz, data_track_.armors_num);
+    }
+    else
+    {
+      bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, transform, odom2pitch_);
+    }
+    solve_success = bullet_solver_->solve();
   }
-  else
-  {
-    bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, transform, odom2pitch_);
-  }
-  bool solve_success = bullet_solver_->solve();
 
   if (publish_rate_ > 0.0 && last_publish_time_ + ros::Duration(1.0 / publish_rate_) < time)
   {
