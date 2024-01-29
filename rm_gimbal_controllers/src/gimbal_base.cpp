@@ -258,7 +258,19 @@ void Controller::track(const ros::Time& time)
     }
     else
     {
-      bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, transform, odom2pitch_);
+      geometry_msgs::Pose windmill_pose;
+      windmill_pose.position = data_track_.position;
+      windmill_pose.orientation = data_track_.rotation;
+      tf2::doTransform(windmill_pose, windmill_pose, transform);
+      tf2::Transform odom2windmill;
+      tf2::fromMsg(windmill_pose, odom2windmill);
+      geometry_msgs::Transform windmill2odom = tf2::toMsg(odom2windmill.inverse());
+      geometry_msgs::TransformStamped windmill2odom_stamp;
+      windmill2odom_stamp.transform = windmill2odom;
+      windmill2odom_stamp.child_frame_id = "odom";
+      windmill2odom_stamp.header = transform.header;
+      windmill2odom_stamp.header.frame_id = "windmill";
+      bullet_solver_->input(yaw, data_track_.v_yaw, cmd_gimbal_.bullet_speed, windmill2odom_stamp, odom2pitch_);
     }
     solve_success = bullet_solver_->solve();
   }
