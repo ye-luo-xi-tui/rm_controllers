@@ -73,7 +73,7 @@ public:
   void input(geometry_msgs::Point pos, geometry_msgs::Vector3 vel, double bullet_speed, double yaw, double v_yaw,
              double r1, double r2, double dz, int armors_num);
   // windmill
-  void input(double theta, double theta_dot, double bullet_speed, geometry_msgs::TransformStamped windmill2odom,
+  void input(double theta, double theta_dot, double bullet_speed, geometry_msgs::TransformStamped odom2windmill,
              geometry_msgs::TransformStamped odom2pitch);
   bool solve();
   double getGimbalError(double yaw_real, double pitch_real);

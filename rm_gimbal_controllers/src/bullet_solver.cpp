@@ -142,12 +142,12 @@ void BulletSolver::input(geometry_msgs::Point pos, geometry_msgs::Vector3 vel, d
 }
 
 void BulletSolver::input(double theta, double theta_dot, double bullet_speed,
-                         geometry_msgs::TransformStamped windmill2odom, geometry_msgs::TransformStamped odom2pitch)
+                         geometry_msgs::TransformStamped odom2windmill, geometry_msgs::TransformStamped odom2pitch)
 {
   bullet_speed_ = bullet_speed;
   resistance_coff_ = getResistanceCoefficient(bullet_speed_) != 0 ? getResistanceCoefficient(bullet_speed_) : 0.001;
   track_target_ = true;
-  target_kinematics_.reset(new WindmillKinematics(theta, theta_dot, windmill_radius_, windmill2odom, odom2pitch));
+  target_kinematics_.reset(new WindmillKinematics(theta, theta_dot, windmill_radius_, odom2windmill, odom2pitch));
 }
 
 bool BulletSolver::solve()
